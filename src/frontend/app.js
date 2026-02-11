@@ -111,7 +111,7 @@ $(document).ready(function () {
   }
 
   //Compte pays 
-  async function callAzure() {
+  /*async function callAzure() {
     const url = "https://function-fd21-tarres-elise-fbdmgcgfe4cbeqb4.northeurope-01.azurewebsites.net/api/HttpTrigger1?code=lsPxwdkwuqMPE2kBxgsymv5WAaPc-Bb4ntem-IFoRFFPAzFuVbSd5Q==";
 
     try {
@@ -123,5 +123,11 @@ $(document).ready(function () {
         console.error(error);
     }
 }
+*/
+
+function callAzure() {
+  alert("Bouton cliqué !");
+};
 
 });
+

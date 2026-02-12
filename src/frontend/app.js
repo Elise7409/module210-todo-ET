@@ -16,22 +16,18 @@ function loadCatMap() {
     return {};
   }
 }
-
 function saveCatMap(map) {
   localStorage.setItem(CAT_KEY, JSON.stringify(map));
 }
-
 function getCat(taskId) {
   const map = loadCatMap();
   return map[String(taskId)] || "work";
 }
-
 function setCat(taskId, cat) {
   const map = loadCatMap();
   map[String(taskId)] = cat;
   saveCatMap(map);
 }
-
 function catLabel(cat) {
   if (cat === "work") return "Work";
   if (cat === "personal") return "Personal";
@@ -60,73 +56,95 @@ async function callAzure() {
     }
 
     const match = text.match(/\d+/);
-
-    if (match) {
-      el.innerText = `Nombre de pays : ${match[0]}.`;
-    } else {
-      el.innerText = `Nombre de pays : ${text.trim()}.`;
-    }
+    el.innerText = match
+      ? `Nombre de pays : ${match[0]}.`
+      : `Nombre de pays : ${text.trim()}.`;
   } catch (error) {
     el.innerText = "Erreur réseau : " + error.message;
   }
 }
 
 // ==============================
-// MAIN
+// HELPERS
+// ==============================
+
+// Trouve l'ID de la tâche "la plus probable" nouvellement créée
+// (même si le backend ne renvoie pas l'objet créé)
+function findNewestTaskIdByDescription(tasks, description) {
+  const desc = description.trim().toLowerCase();
+
+  const matches = tasks.filter(
+    (t) => (t.description || "").trim().toLowerCase() === desc
+  );
+
+  if (matches.length === 0) return null;
+
+  // Si les IDs sont numériques, on prend le plus grand (souvent le plus récent)
+  const allNumeric = matches.every((m) => /^\d+$/.test(String(m.id)));
+
+  if (allNumeric) {
+    matches.sort((a, b) => Number(b.id) - Number(a.id));
+    return matches[0].id;
+  }
+
+  // Sinon, on prend le dernier match (souvent ajouté en dernier)
+  return matches[matches.length - 1].id;
+}
+
+// ==============================
+// MAIN (bind events when DOM is ready)
 // ==============================
 $(document).ready(function () {
-
   loadTasks();
 
-  // ==========================
-  // ADD TASK
-  // ==========================
+  // ADD TASK (backend unchanged)
   $("#todo-form").on("submit", async function (e) {
     e.preventDefault();
 
     const description = $("#todo-input").val().trim();
     if (!description) return;
 
+    const selectedCat = $("#category-select").val() || "work";
     const task = { description };
 
     try {
-      const selectedCat = $("#category-select").val() || "work";
-
-      const response = await fetch(apiEndpoint, {
+      // 1) create task
+      await fetch(apiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(task),
       });
 
-      const createdTask = await response.json();
+      // 2) reload tasks from API
+      const response = await fetch(apiEndpoint);
+      const tasks = await response.json();
 
-      if (createdTask && createdTask.id != null) {
-        setCat(createdTask.id, selectedCat);
+      // 3) find the newly created task id and assign category locally
+      const newId = findNewestTaskIdByDescription(tasks, description);
+      if (newId != null) {
+        setCat(newId, selectedCat);
+      } else {
+        console.warn("Impossible de retrouver la tâche créée pour appliquer la catégorie.");
       }
 
+      // UI reset
       $("#todo-input").val("");
-      loadTasks();
 
+      // 4) refresh UI (using normal loader)
+      loadTasks();
     } catch (error) {
       console.error("Erreur lors de l'ajout :", error);
     }
   });
 
-  // ==========================
-  // TOGGLE TASK
-  // ==========================
+  // TOGGLE (backend unchanged)
   $("#todo-list").on("click", ".task-toggle", async function () {
-
     const $taskElement = $(this).closest("li");
     const taskId = $taskElement.data("id");
     const isCompleted = $taskElement.hasClass("completed");
     const description = $taskElement.find(".task-desc").text().trim();
 
-    const updatedTask = {
-      id: taskId,
-      description,
-      completed: !isCompleted,
-    };
+    const updatedTask = { id: taskId, description, completed: !isCompleted };
 
     try {
       await fetch(apiEndpoint, {
@@ -134,24 +152,21 @@ $(document).ready(function () {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTask),
       });
-
       loadTasks();
     } catch (error) {
       console.error("Erreur update :", error);
     }
   });
 
-  // ==========================
-  // DELETE TASK
-  // ==========================
+  // DELETE (backend unchanged)
   $("#todo-list").on("click", ".delete-btn", async function (e) {
     e.stopPropagation();
-
     const taskId = $(this).parent().data("id");
 
     try {
       await fetch(`${apiEndpoint}?id=${taskId}`, { method: "DELETE" });
 
+      // remove local category mapping too
       const map = loadCatMap();
       delete map[String(taskId)];
       saveCatMap(map);
@@ -162,11 +177,8 @@ $(document).ready(function () {
     }
   });
 
-  // ==========================
-  // CHANGE CATEGORY
-  // ==========================
+  // CHANGE CATEGORY (local only)
   $("#todo-list").on("change", ".task-cat-select", function () {
-
     const $li = $(this).closest("li");
     const taskId = $li.data("id");
     const cat = $(this).val();
@@ -180,11 +192,10 @@ $(document).ready(function () {
 
     $badge.find(".badge-label").text(catLabel(cat));
   });
-
 });
 
 // ==============================
-// LOAD TASKS
+// LOAD TASKS (renders UI)
 // ==============================
 async function loadTasks() {
   try {
@@ -194,8 +205,7 @@ async function loadTasks() {
 
     $("#todo-list").empty();
 
-    tasks.forEach(task => {
-
+    tasks.forEach((task) => {
       const cat = getCat(task.id);
 
       const $li = $("<li>")
@@ -207,9 +217,7 @@ async function loadTasks() {
         .addClass("task-toggle")
         .prop("checked", task.completed);
 
-      const $desc = $("<span>")
-        .addClass("task-desc")
-        .text(task.description);
+      const $desc = $("<span>").addClass("task-desc").text(task.description);
 
       const $badge = $(`
         <span class="badge badge-${cat}">
@@ -227,20 +235,15 @@ async function loadTasks() {
         </select>
       `).val(cat);
 
-      const $catWrap = $("<div>")
-        .addClass("task-cat")
-        .append($badge, $catSelect);
+      const $catWrap = $("<div>").addClass("task-cat").append($badge, $catSelect);
 
-      const $delete = $("<button>")
-        .text("Delete")
-        .addClass("delete-btn");
+      const $delete = $("<button>").text("Delete").addClass("delete-btn");
 
       $li.append($checkbox, $desc, $catWrap, $delete);
       $("#todo-list").append($li);
     });
 
     updateProgress(tasks);
-
   } catch (error) {
     console.error("Erreur chargement :", error);
   }
@@ -251,7 +254,7 @@ async function loadTasks() {
 // ==============================
 function updateProgress(tasks) {
   const total = tasks.length;
-  const done = tasks.filter(t => t.completed).length;
+  const done = tasks.filter((t) => t.completed).length;
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
 
   $("#stat-total").text(total);

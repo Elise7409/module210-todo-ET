@@ -9,6 +9,14 @@
 </head>
 
 <body>
+    <div id="start-overlay" class="start-overlay">
+        <div class="warning-box">
+            <div class="warning-title">⚠ WARNING ⚠</div>
+            <div class="warning-sub">Game Starting In...</div>
+            <div id="countdown" class="countdown">3</div>
+        </div>
+    </div>
+
 
     <div class="snake-container">
         <h1>Neon Snake 🐍</h1>
@@ -169,10 +177,43 @@
         }, { passive: false });
 
         // start
-        resetGame();
-        render();
+        startWithCountdown();
+        function startWithCountdown() {
+            const overlay = document.getElementById("start-overlay");
+            const counter = document.getElementById("countdown");
+
+            let count = 3;
+
+            const interval = setInterval(() => {
+                count--;
+
+                if (count > 0) {
+                    counter.textContent = count;
+                    counter.style.animation = "none";
+                    void counter.offsetWidth;
+                    counter.style.animation = "zoom .8s ease";
+                } else if (count === 0) {
+                    counter.textContent = "GO!";
+                    counter.style.color = "#22d3ee";
+                } else {
+                    clearInterval(interval);
+                    overlay.style.opacity = "0";
+                    overlay.style.transition = "opacity .5s ease";
+
+                    setTimeout(() => {
+                        overlay.remove();
+                        overlay.style.transform = "scale(1.02)";
+                        resetGame();
+                        render();
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+
     </script>
 
 </body>
+
 
 </html>

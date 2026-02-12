@@ -497,3 +497,61 @@ body::after{
   z-index: 9999;
 }
 
+/* =========================
+   START OVERLAY
+========================= */
+
+.start-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn .4s ease;
+}
+
+.warning-box{
+  text-align: center;
+  color: #fff;
+}
+
+.warning-title{
+  font-size: 3rem;
+  font-weight: 900;
+  color: #ff3b3b;
+  text-shadow: 0 0 20px #ff0000;
+  animation: pulse 1s infinite alternate;
+}
+
+.warning-sub{
+  margin-top: 15px;
+  font-size: 1.2rem;
+  opacity: .8;
+}
+
+.countdown{
+  font-size: 5rem;
+  margin-top: 20px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #5b7cff, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: zoom 0.8s ease;
+}
+
+@keyframes pulse{
+  from{ transform: scale(1); }
+  to{ transform: scale(1.08); }
+}
+
+@keyframes zoom{
+  from{ transform: scale(0.5); opacity:0; }
+  to{ transform: scale(1); opacity:1; }
+}
+
+@keyframes fadeIn{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}

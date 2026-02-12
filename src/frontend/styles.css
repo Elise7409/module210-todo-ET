@@ -351,3 +351,58 @@ body{
               0 0 35px rgba(168,85,247,.5);
 }
 
+/* Category select (form) */
+.category-select{
+  padding: 12px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.25);
+  color: var(--text);
+  outline:none;
+  cursor:pointer;
+}
+
+/* Badge */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  font-size: .78rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  white-space: nowrap;
+}
+
+.badge-dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(255,255,255,.20);
+}
+
+/* Badge colors */
+.badge-work .badge-dot{ background: var(--neonA); box-shadow: 0 0 14px rgba(91,124,255,.55); }
+.badge-personal .badge-dot{ background: var(--neonB); box-shadow: 0 0 14px rgba(168,85,247,.55); }
+.badge-study .badge-dot{ background: #22d3ee; box-shadow: 0 0 14px rgba(34,211,238,.55); }
+.badge-sport .badge-dot{ background: #34d399; box-shadow: 0 0 14px rgba(52,211,153,.55); }
+
+/* Per-task category picker */
+.task-cat{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.task-cat select{
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  color: var(--text);
+  cursor:pointer;
+}
+

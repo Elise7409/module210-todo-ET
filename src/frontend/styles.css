@@ -410,4 +410,55 @@ body{
   white-space: pre-line;
 }
 
+/* =========================
+   THEME SYSTEM
+========================= */
+
+/* Variables par défaut (DARK) */
+:root {
+  --bg-main: #0c0f1f;
+  --bg-card: rgba(20, 24, 48, 0.7);
+  --text-main: #ffffff;
+  --accentA: #5b7cff;
+  --accentB: #a855f7;
+}
+
+/* Mode clair */
+body.light-mode {
+  --bg-main: #f4f7ff;
+  --bg-card: #ffffff;
+  --text-main: #111827;
+  --accentA: #3b82f6;
+  --accentB: #8b5cf6;
+}
+
+/* Appliquer les variables */
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.app-container {
+  background: var(--bg-card);
+  transition: background 0.3s ease;
+}
+
+/* Bouton toggle */
+.theme-toggle {
+  margin-left: 20px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--accentA), var(--accentB));
+  color: white;
+  box-shadow: 0 0 12px rgba(91,124,255,.4);
+  transition: all .2s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+}
 

@@ -97,6 +97,30 @@ function findNewestTaskIdByDescription(tasks, description) {
 $(document).ready(function () {
   loadTasks();
 
+    // ==========================
+// THEME TOGGLE
+// ==========================
+const toggleBtn = $("#theme-toggle");
+
+// Charger thème sauvegardé
+if (localStorage.getItem("theme") === "light") {
+  $("body").addClass("light-mode");
+  toggleBtn.text("☀️ Light");
+}
+
+// Toggle
+toggleBtn.on("click", function () {
+  $("body").toggleClass("light-mode");
+
+  if ($("body").hasClass("light-mode")) {
+    localStorage.setItem("theme", "light");
+    toggleBtn.text("☀️ Light");
+  } else {
+    localStorage.setItem("theme", "dark");
+    toggleBtn.text("🌙 Dark");
+  }
+});
+
   // ADD TASK (backend unchanged)
   $("#todo-form").on("submit", async function (e) {
     e.preventDefault();

@@ -406,3 +406,8 @@ body{
   cursor:pointer;
 }
 
+.result{
+  white-space: pre-line;
+}
+
+

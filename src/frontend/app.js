@@ -33,16 +33,37 @@ function catLabel(cat) {
 // callAzure global
 // -----------------
 async function callAzure() {
-  const url = "https://function-fd21-tarres-elise-fbdmgcgfe4cbeqb4.northeurope-01.azurewebsites.net/api/HttpTrigger1?code=lsPxwdkwuqMPE2kBxgsymv5WAaPc-Bb4ntem-IFoRFFPAzFuVbSd5Q==";
+  const url =
+    "https://function-fd21-tarres-elise-fbdmgcgfe4cbeqb4.northeurope-01.azurewebsites.net/api/HttpTrigger1?code=lsPxwdkwuqMPE2kBxgsymv5WAaPc-Bb4ntem-IFoRFFPAzFuVbSd5Q==";
+
+  const el = document.getElementById("resultat");
+
+  // UI: loading state
+  el.innerText = "Chargement…";
+
   try {
     const response = await fetch(url, { method: "GET" });
     const text = await response.text();
-    document.getElementById("resultat").innerText = `Status: ${response.status}\n${text}`;
+
+    if (!response.ok) {
+      el.innerText = `Erreur (${response.status})`;
+      return;
+    }
+
+    // Try to extract a number from whatever the function returns
+    const match = text.match(/\d+/);
+    if (match) {
+      el.innerText = `Nombre de pays : ${match[0]}.`;
+    } else {
+      // fallback if no number found
+      el.innerText = `Nombre de pays : ${text.trim()}.`;
+    }
   } catch (error) {
     console.error("Erreur lors de l'appel Azure :", error);
-    document.getElementById("resultat").innerText = "Erreur réseau ou CORS : " + error.message;
+    el.innerText = "Erreur réseau : " + error.message;
   }
 }
+
 
 // -----------------
 // Todo + Progress + Categories UI

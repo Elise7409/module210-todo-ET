@@ -462,3 +462,8 @@ body {
   transform: translateY(-2px);
 }
 
+.bas-test{
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}

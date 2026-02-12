@@ -8,19 +8,20 @@ async function callAzure() {
     const url = "https://function-fd21-tarres-elise-fbdmgcgfe4cbeqb4.northeurope-01.azurewebsites.net/api/HttpTrigger1?code=lsPxwdkwuqMPE2kBxgsymv5WAaPc-Bb4ntem-IFoRFFPAzFuVbSd5Q==";
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, { method: "GET" });
 
-        if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-        }
+        const text = await response.text();
 
-        const data = await response.text(); // ou .json() si JSON
-        document.getElementById("resultat").innerText = data;
+        document.getElementById("resultat").innerText =
+            `Status: ${response.status}\n${text}`;
+
     } catch (error) {
         console.error("Erreur lors de l'appel Azure :", error);
-        document.getElementById("resultat").innerText = "Erreur : " + error.message;
+        document.getElementById("resultat").innerText =
+            "Erreur réseau ou CORS : " + error.message;
     }
 }
+
 
 // -----------------
 // 2. Todo (fonctionnalités de base intactes) + Progress UI (lecture seule)

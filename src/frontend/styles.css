@@ -467,3 +467,33 @@ body {
   align-items: center;
   flex-direction: row;
 }
+
+/* ===== Progress Glow (background reacts to completion %) ===== */
+body{
+  position: relative;
+}
+
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--glow, 0);                 /* contrôlé par JS */
+  transition: opacity .35s ease;
+  background:
+    radial-gradient(900px 700px at 25% 15%, rgba(91,124,255,.22), transparent 60%),
+    radial-gradient(900px 700px at 75% 35%, rgba(168,85,247,.20), transparent 60%),
+    radial-gradient(700px 500px at 50% 85%, rgba(34,211,238,.14), transparent 60%);
+  mix-blend-mode: screen;
+}
+
+/* ===== Confetti canvas layer ===== */
+#confetti{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}
+

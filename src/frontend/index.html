@@ -1,23 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Todo App with Backend</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App — Neon Ops</title>
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="app.js" defer></script>
 </head>
+
 <body>
-  <div class="app-container">
-    <h1>Todo App is really cool</h1>
-    <form id="todo-form">
-      <input type="text" id="todo-input" placeholder="Add a new task" required>
-      <button type="submit">Add</button>
-    </form>
-    <ul id="todo-list"></ul>
+  <div class="bg-grid"></div>
+  <div class="glow-orb orb1"></div>
+  <div class="glow-orb orb2"></div>
+
+  <main class="layout">
+    <section class="app-container">
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div class="brand-text">
+            <h1>Neon Ops — Todo</h1>
+            <p class="subtitle">Black UI • Blue/Violet glow • Zero excuses</p>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Total</div>
+            <div class="stat-value" id="stat-total">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Done</div>
+            <div class="stat-value" id="stat-done">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Focus</div>
+            <div class="stat-value"><span id="stat-percent">0</span>%</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Progress -->
+      <div class="progress-wrap" aria-label="Progression des tâches">
+        <div class="progress-top">
+          <span class="progress-title">Mission progress</span>
+          <span class="progress-hint" id="progress-hint">Add tasks to begin</span>
+        </div>
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="todo-form" class="todo-form">
+        <input type="text" id="todo-input" placeholder="Add a new mission…" required />
+        <button type="submit" class="btn-primary">
+          <span class="btn-glow" aria-hidden="true"></span>
+          Add
+        </button>
+      </form>
+
+      <!-- List -->
+      <ul id="todo-list" class="todo-list"></ul>
+
+      <footer class="footer">
+        <button class="btn-secondary" onclick="callAzure()">
+          Lancer la fonction
+        </button>
+        <p id="resultat" class="result"></p>
+        <p class="easter" aria-hidden="true">Tip: some keys unlock secrets…</p>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Hidden mini-game overlay -->
+  <div id="arcade-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="overlay-card">
+      <div class="overlay-header">
+        <div>
+          <h2>NEON ARCADE</h2>
+          <p>Click the orbs. 20 seconds. Beat your best.</p>
+        </div>
+        <button id="arcade-close" class="btn-icon" aria-label="Close">✕</button>
+      </div>
+
+      <div class="arcade-stats">
+        <div class="pill">Time: <span id="arcade-time">20</span>s</div>
+        <div class="pill">Score: <span id="arcade-score">0</span></div>
+        <div class="pill">Best: <span id="arcade-best">0</span></div>
+      </div>
+
+      <div id="arcade-area" class="arcade-area" aria-label="Arcade area"></div>
+
+      <div class="overlay-actions">
+        <button id="arcade-start" class="btn-primary">
+          <span class="btn-glow" aria-hidden="true"></span>
+          Start
+        </button>
+        <button id="arcade-reset-best" class="btn-secondary">Reset best</button>
+      </div>
+
+      <p class="overlay-note">Hidden mode: Konami code ↑↑↓↓←→←→BA</p>
+    </div>
   </div>
-  <button onclick="callAzure()">Lancer la fonction</button>
-  <p id="resultat"></p>
 </body>
 </html>

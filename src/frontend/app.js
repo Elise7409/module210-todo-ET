@@ -23,7 +23,7 @@ async function callAzure() {
 }
 
 // -----------------
-// 2. Tout le reste de ton code Todo
+// 2. Todo + UI enhancements (progress + easter egg arcade)
 // -----------------
 $(document).ready(function () {
     // Charger les tâches au démarrage
@@ -89,7 +89,194 @@ $(document).ready(function () {
         }
     });
 
-    // Charger les tâches
+    // -----------------
+    // Progress UI (read-only)
+    // -----------------
+    function updateProgress(tasks) {
+        const total = tasks.length;
+        const done = tasks.filter(t => t.completed).length;
+        const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+        $("#stat-total").text(total);
+        $("#stat-done").text(done);
+        $("#stat-percent").text(pct);
+
+        $("#progress-fill").css("width", pct + "%");
+
+        if (total === 0) {
+            $("#progress-hint").text("Add tasks to begin");
+        } else if (pct === 100) {
+            $("#progress-hint").text("All missions complete ✨");
+        } else if (pct >= 70) {
+            $("#progress-hint").text("Almost there — keep going");
+        } else if (pct >= 30) {
+            $("#progress-hint").text("Good pace — stay focused");
+        } else {
+            $("#progress-hint").text("Warm up — start completing missions");
+        }
+    }
+
+    // -----------------
+    // Mini-game: Konami → NEON ARCADE overlay
+    // Isolated from todo logic
+    // -----------------
+    const overlay = document.getElementById("arcade-overlay");
+    const area = document.getElementById("arcade-area");
+    const timeEl = document.getElementById("arcade-time");
+    const scoreEl = document.getElementById("arcade-score");
+    const bestEl = document.getElementById("arcade-best");
+    const btnStart = document.getElementById("arcade-start");
+    const btnClose = document.getElementById("arcade-close");
+    const btnResetBest = document.getElementById("arcade-reset-best");
+
+    const BEST_KEY = "neon_arcade_best";
+    let best = Number(localStorage.getItem(BEST_KEY) || 0);
+    bestEl.textContent = best;
+
+    let running = false;
+    let score = 0;
+    let timeLeft = 20;
+    let tickTimer = null;
+    let spawnTimer = null;
+
+    function openArcade() {
+        overlay.classList.remove("hidden");
+        overlay.setAttribute("aria-hidden", "false");
+        // reset UI
+        stopGame();
+        setScore(0);
+        setTime(20);
+        best = Number(localStorage.getItem(BEST_KEY) || 0);
+        bestEl.textContent = best;
+        clearArea();
+    }
+
+    function closeArcade() {
+        stopGame();
+        overlay.classList.add("hidden");
+        overlay.setAttribute("aria-hidden", "true");
+        clearArea();
+    }
+
+    function setScore(v) {
+        score = v;
+        scoreEl.textContent = score;
+        if (score > best) {
+            best = score;
+            localStorage.setItem(BEST_KEY, String(best));
+            bestEl.textContent = best;
+        }
+    }
+
+    function setTime(v) {
+        timeLeft = v;
+        timeEl.textContent = timeLeft;
+    }
+
+    function clearArea() {
+        if (!area) return;
+        area.innerHTML = "";
+    }
+
+    function stopGame() {
+        running = false;
+        if (tickTimer) { clearInterval(tickTimer); tickTimer = null; }
+        if (spawnTimer) { clearInterval(spawnTimer); spawnTimer = null; }
+    }
+
+    function spawnOrb() {
+        if (!running) return;
+        if (!area) return;
+
+        const orb = document.createElement("div");
+        orb.className = "orb";
+
+        const pad = 12;
+        const maxX = area.clientWidth - 46 - pad;
+        const maxY = area.clientHeight - 46 - pad;
+        const x = Math.max(pad, Math.floor(Math.random() * maxX));
+        const y = Math.max(pad, Math.floor(Math.random() * maxY));
+
+        orb.style.left = x + "px";
+        orb.style.top = y + "px";
+
+        orb.addEventListener("click", () => {
+            if (!running) return;
+            setScore(score + 1);
+            orb.remove();
+        });
+
+        area.appendChild(orb);
+
+        // auto remove after a short time to keep it dynamic
+        setTimeout(() => {
+            if (orb && orb.parentNode) orb.remove();
+        }, 850);
+    }
+
+    function startGame() {
+        if (running) return;
+        running = true;
+        clearArea();
+        setScore(0);
+        setTime(20);
+
+        // spawn slightly faster over time
+        spawnTimer = setInterval(spawnOrb, 380);
+
+        tickTimer = setInterval(() => {
+            if (!running) return;
+            timeLeft -= 1;
+            setTime(timeLeft);
+
+            if (timeLeft <= 0) {
+                stopGame();
+                // Little end burst
+                for (let i = 0; i < 6; i++) setTimeout(spawnOrb, i * 60);
+            }
+        }, 1000);
+    }
+
+    if (btnStart) btnStart.addEventListener("click", startGame);
+    if (btnClose) btnClose.addEventListener("click", closeArcade);
+    if (btnResetBest) btnResetBest.addEventListener("click", () => {
+        localStorage.removeItem(BEST_KEY);
+        best = 0;
+        bestEl.textContent = "0";
+    });
+
+    // Close overlay with ESC
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && overlay && !overlay.classList.contains("hidden")) {
+            closeArcade();
+        }
+    });
+
+    // Konami code: ↑↑↓↓←→←→BA
+    const konami = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+    let kIndex = 0;
+
+    document.addEventListener("keydown", (e) => {
+        const key = e.key;
+
+        const expected = konami[kIndex];
+        const normalized = (key.length === 1) ? key.toLowerCase() : key;
+
+        if (normalized === expected) {
+            kIndex++;
+            if (kIndex === konami.length) {
+                kIndex = 0;
+                openArcade();
+            }
+        } else {
+            // reset but allow quick restart if first matches
+            kIndex = (normalized === konami[0]) ? 1 : 0;
+        }
+    });
+
+    // -----------------
+    // Charger les tâches (base functionality intact)
+    // -----------------
     async function loadTasks() {
         try {
             const response = await fetch(apiEndpoint);
@@ -107,6 +294,9 @@ $(document).ready(function () {
 
                 $("#todo-list").append(listItem);
             });
+
+            // UI only: progress/stats
+            updateProgress(tasks);
         } catch (error) {
             console.error("Erreur lors du chargement :", error);
         }

@@ -331,3 +331,23 @@ body{
   .stat{ flex:1; }
   .todo-form{ flex-direction:column; }
 }
+
+.btn-neon-link{
+  display:inline-block;
+  padding:10px 16px;
+  border-radius:14px;
+  text-decoration:none;
+  color:white;
+  font-weight:700;
+  background: linear-gradient(135deg, #5b7cff, #a855f7);
+  box-shadow: 0 0 15px rgba(91,124,255,.4),
+              0 0 25px rgba(168,85,247,.3);
+  transition: all .2s ease;
+}
+
+.btn-neon-link:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(91,124,255,.6),
+              0 0 35px rgba(168,85,247,.5);
+}
+

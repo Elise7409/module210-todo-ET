@@ -555,3 +555,66 @@ body::after{
   from{ opacity:0; }
   to{ opacity:1; }
 }
+
+/* ==============================
+   CINEMATIC INTRO
+============================== */
+
+.intro-overlay{
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #1a0000, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  animation: screenShake 0.4s infinite alternate;
+}
+
+.intro-content{
+  text-align: center;
+  color: white;
+}
+
+.intro-warning{
+  font-size: 4rem;
+  font-weight: 900;
+  color: #ff0000;
+  text-shadow:
+    0 0 20px #ff0000,
+    0 0 40px #ff0000,
+    0 0 60px #ff0000;
+  animation: pulseWarning 0.8s infinite alternate;
+}
+
+.intro-sub{
+  margin-top: 20px;
+  font-size: 1.2rem;
+  opacity: 0.8;
+  letter-spacing: 2px;
+}
+
+.intro-count{
+  margin-top: 40px;
+  font-size: 8rem;
+  font-weight: 900;
+  background: linear-gradient(135deg,#5b7cff,#a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: zoomCount 0.6s ease;
+}
+
+@keyframes pulseWarning{
+  from{ transform: scale(1); }
+  to{ transform: scale(1.05); }
+}
+
+@keyframes zoomCount{
+  from{ transform: scale(0.4); opacity:0; }
+  to{ transform: scale(1); opacity:1; }
+}
+
+@keyframes screenShake{
+  from{ transform: translate(0px,0px); }
+  to{ transform: translate(2px,-2px); }
+}

@@ -50,6 +50,7 @@ jobs:
           budgetPath: ./budget.json
           uploadArtifacts: true
           temporaryPublicStorage: true
+          configPath: ./.lighthouserc.json
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -74,6 +75,7 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
 
 
 

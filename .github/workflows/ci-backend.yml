@@ -8,8 +8,8 @@ on:
       - 'backend/**'
 
 env:
-  REGISTRY: "nomduregistre.azurecr.io"   # URL complète de ta registry
-  IMAGE_NAME: "backend-app"
+  REGISTRY: "acrinfofd21210.azurecr.io"
+  IMAGE_NAME: "backend-app-TARRES-EX3"
 
 jobs:
   build-and-push:

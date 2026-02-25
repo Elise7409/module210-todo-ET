@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '/src/backend/**'
+      - 'src/backend/**'
 
 env:
   REGISTRY: "acrinfofd21210.azurecr.io"

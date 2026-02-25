@@ -44,7 +44,7 @@ jobs:
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
-            https://example.com/
+            https://witty-mushroom-0fc00eb03.6.azurestaticapps.net/
           budgetPath: ./budget.json
           uploadArtifacts: true
           temporaryPublicStorage: true
@@ -72,5 +72,6 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
 
 

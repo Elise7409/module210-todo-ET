@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: "acrinfofd21210.azurecr.io"
-  IMAGE_NAME: "backend-app-TARRES-EX3"
+  IMAGE_NAME: "backend-app-tarres-ex3"
 
 jobs:
   build-and-push:
